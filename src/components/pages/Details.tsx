@@ -1,17 +1,20 @@
 import { useEffect,useState } from 'react';
 import {Link, useParams} from 'react-router'
 import axios from 'axios';
-import { DetailsData, InsideData, Ogdata, Data, Bool } from '../../lib/types';
+import { DetailsData, InsideData, Ogdata, Data} from '../../lib/types';
+import { useThemeContext } from '../../ThemeContext';
+import Loading from '../Loading';
 
 
-const Details = ({darkmode}:Bool) => {
+const Details = () => {
     const base_url = import.meta.env.VITE_BASE_URL
     const {id} = useParams()
 
     const [details,setDetails] = useState<InsideData>()
     const [genres,setGenres] = useState<Data[]>([])
     const [error,setError] = useState<object | string | undefined >()
-    const [loading,setLoading] = useState<boolean>(true)
+    const {darkmode,loading,setLoading=()=>{}} = useThemeContext()
+    
     
     //Fetching Details
     useEffect(()=>{
@@ -38,7 +41,7 @@ const Details = ({darkmode}:Bool) => {
       }
   
       animeFetch()
-    },[base_url,id])
+    },[base_url,id,setLoading])
 
     //Fetching Genre
     useEffect(()=>{
@@ -65,9 +68,9 @@ const Details = ({darkmode}:Bool) => {
       }
   
       genreFetch()
-    },[base_url,id])
+    },[base_url,id,setLoading])
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <Loading/>;
 
     return (
         <>
@@ -86,23 +89,23 @@ const Details = ({darkmode}:Bool) => {
                             </div>
                     
                       
-                            <div className="flex-2 text-gray-300 space-y-4">
-                                <h1 className="text-3xl text-amber-50 font-bold">{details?.attributes?.slug}</h1>
+                            <div className={`flex-2 ${darkmode ? 'text-amber-50':'text-black'} space-y-4`}>
+                                <h1 className={`text-3xl ${darkmode ? 'text-amber-50':'text-black'} font-bold`}>{details?.attributes?.slug}</h1>
                                 {/* <p className="text-gray-600 text-lg">{details?.id}</p> */}
-                                <p className="text-gray-300 leading-relaxed">{details?.attributes?.synopsis}</p>
+                                <p className={`${darkmode ? 'text-gray-300 ':'text-black'} leading-relaxed`}>{details?.attributes?.synopsis}</p>
                                 <div className="space-y-2">
                                 <p>
-                                    <strong className ='text-amber-50'>Rating:</strong> {details?.attributes?.averageRating}
+                                    <strong className ={`${darkmode ? 'text-amber-50':'text-black/80'} font-bold`}>Rating:</strong> {details?.attributes?.averageRating}
                                 </p>
                                 <p>
-                                    <strong className ='text-amber-50'>Episodes:</strong> {details?.attributes?.episodeCount}
+                                    <strong className ={`${darkmode ? 'text-amber-50':'text-black/80'} font-bold`}>Episodes:</strong> {details?.attributes?.episodeCount}
                                 </p>
                                 <p>
-                                    <strong className ='text-amber-50'>Status:</strong> {details?.attributes?.status}
+                                    <strong className ={`${darkmode ? 'text-amber-50':'text-black/80'} font-bold`}>Status:</strong> {details?.attributes?.status}
                                 </p>
                                 <p className='flex gap-3'>
                                     
-                                    <strong className ='text-amber-50'>Genre: </strong>
+                                    <strong className ={`${darkmode ? 'text-amber-50':'text-black/80'} font-bold`}>Genre: </strong>
                                     <span className='flex gap-2'>
                                      {genres ? (
                                       genres.length === 0 ? (
@@ -110,7 +113,7 @@ const Details = ({darkmode}:Bool) => {
                                       ) : (
                                         genres.map((genre:Data) => 
                                         <Link to={`/genreAnimes/${genre.attributes.slug}`}>
-                                          <span className='bg-gray-600 px-2 rounded-2xl' key={genre.id}>{genre.attributes.slug}</span>
+                                          <span className={`${darkmode ? 'bg-gray-600':'bg-gray-400'} hover:bg-amber-500 px-2 rounded-2xl`} key={genre.id}>{genre.attributes.slug}</span>
                                         </Link> )
                                       )
                                     ) : (
@@ -119,10 +122,10 @@ const Details = ({darkmode}:Bool) => {
                                     </span>
                                 </p>
                                 <p>
-                                    <strong className ='text-amber-50'>Release Date:</strong> {details?.attributes?.startDate}
+                                    <strong className ={`${darkmode ? 'text-amber-50':'text-black/80'} font-bold`}>Release Date:</strong> {details?.attributes?.startDate}
                                 </p>
                                 <p>
-                                    <strong className ='text-amber-50'>End Date:</strong> {details?.attributes?.endDate || 'N/A'}
+                                    <strong className ={`${darkmode ? 'text-amber-50':'text-black/80'} font-bold`}>End Date:</strong> {details?.attributes?.endDate || 'N/A'}
                                 </p>
                                 </div>
                             </div>

@@ -1,6 +1,9 @@
 import { Link } from "react-router";
+import { useThemeContext } from "../ThemeContext";
 
-const Navbar = ({darkmode}:{darkmode:boolean}) => {
+const Navbar = () => {
+        const {darkmode} = useThemeContext()
+    
     return ( 
         <>
          <nav className={`flex flex-col sm:flex-row sticky top-0 right-0 left-0 z-50 ${ darkmode ? 'text-white bg-black' : 'text-black bg-white'} sm:justify-between sm:items-center gap-4 p-6`}>

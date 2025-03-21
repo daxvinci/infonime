@@ -1,49 +1,26 @@
 import { Link } from "react-router";
+import { Details } from "../lib/types";
+import { useThemeContext } from "../ThemeContext";
 
-type Data = {
-    data:{
-        id:string;
-        attributes:Attribs;
-    }
-}
-type Attribs = {
-    slug: string;
-    synopsis?: string;
-    averageRating?: string;
-    episodeCount?: number;
-    showType?: string;
-    titles?:{
-        en:string;
-        en_jp:string;
-        ja_jp:string;
-
-    }
-    posterImage?: {
-      tiny?: string;
-      large?: string;
-      small?: string;
-      medium?:string;
-      original?: string;
-    };
-    status:string;
-    [key: string]: unknown; // Allow additional unknown properties
-  };
-
-const Card = ({data}:Data) => {
+const Card = ({data}:Details) => {
 
     const details = data.attributes
     const id = data.id
+    const {darkmode} = useThemeContext()
 
+    
 
     return ( 
         <>
         <div className="card flex justify-between gap-4 h-full">
-            <div className="img-container h-full flex-shrink-0 w-[150px]">
+            <Link to={`/details/${id}`}>
+            <div className="img-container h-full hover:opacity-60 flex-shrink-0 w-[150px]">
                 <img className="object-cover w-full h-full" src={details.posterImage?.small} alt="poster image Unavailable"/>
             </div>
+            </Link>
             <div className="details text-xs flex flex-col gap-1 w-full">
                 <Link to={`/details/${id}`}>
-                    <div className="anime-name text-base text-gray-500"><strong>{details.slug}</strong></div>
+                    <div className={`anime-name text-base ${darkmode ? 'text-white/90':'text-black/60'}`}><strong>{details.slug}</strong></div>
                 </Link>
                 <div className="synopsis w-full mt-2 text-gray-500">
                         {details.synopsis

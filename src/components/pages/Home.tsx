@@ -1,55 +1,82 @@
 import Card from "../Card";
-import {Bool, Data, Ogdata} from "../../lib/types"
+import Loading from "../Loading";
+import { Data, Count, Ogdata} from "../../lib/types"
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Pagination from "../Pagination";
+import { useThemeContext } from "../../ThemeContext";
 
 
-const Home = ({loading,darkmode,setLoading = ()=>{}}:Bool) => {
+const Home = () => {
     
     const base_url = import.meta.env.VITE_BASE_URL;
     const limit:number = 9
+    
+
+    const [totalAnimes,setTotalAnimes] = useState<Count>()
     const [offset,setOffset] = useState<number>(0)
     const [animes,setAnimes] = useState<Data[]>([])
     const [error,setError] = useState<object | string | undefined >()
+    const {darkmode,loading,setLoading=()=>{}} = useThemeContext()
+    
+    
+    const [currentPage,setCurrentPage] = useState(1)
 
-    useEffect(()=>{
-        setLoading(true)
-        const animeFetch = async(limit:number,offset:number)=>{
-          try{
-            const response = await axios.get<Ogdata>( base_url + '/anime',
-              {
-                headers:{
-                  'Content-Type':'application/vnd.api+json'
-                },
-                params:{
-                  'page[limit]':limit,
-                  'page[offset]':offset
-                }
-              })
-            const data = response.data.data
-            setAnimes(data)
-            console.log(data)
-          }
-          catch(err:unknown){
-            // if (err instanceof Error) {
-            //   setError(err); // Set error to the error message
-            // } else {
-            //   setError('An unknown error occurred'); // Fallback message
-            // }
-            setError(err.message)
-            console.log(err)
-          }
-          finally{
-            setLoading(false)
-          }
-        }
+
+    
+    
+      // Handle "Last Page" button click
+   const handleLastPage = async () => {
+    if (!totalAnimes) {
+      console.error('Error maxcount is undefined');
+      return;
+    }
+    const lastPageOffset = Math.floor((totalAnimes.count - 1) / limit) * limit;
+    setOffset(lastPageOffset);
+  };
+  
+  useEffect(()=>{
+    const animeFetch = async(limit:number,offset:number)=>{
+      setLoading(true)
+      try{
+        const response = await axios.get<Ogdata>( base_url + '/anime',
+          {
+            headers:{
+              'Content-Type':'application/vnd.api+json'
+            },
+            params:{
+              'page[limit]':limit,
+              'page[offset]':offset
+            }
+          })
+        const data = response.data.data
+        const meta = response.data.meta
+        const currentPageNumber = Math.floor(offset/limit)+1;
+        setCurrentPage(currentPageNumber)
+        setTotalAnimes(meta)
+        setAnimes(data)
+        console.log(data)
+        setLoading(false)
+      }
+      catch(err){
+        // if (err instanceof Error) {
+        //   setError(err); // Set error to the error message
+        // } else {
+        //   setError('An unknown error occurred'); // Fallback message
+        // }
+        setError('Error...check console')
+        console.log(err)
+      }
+      
+    }
     
         animeFetch(limit,offset)
-      },[setAnimes,setLoading,limit,offset,base_url])
+      },[limit,offset,base_url,setLoading])
     
 
-    if (loading) return <div className={`${darkmode ? 'bg-gray-800 text-amber-50': 'bg-[#f9f9f9] text-gray-700'}`}>Loading...</div>;
+    if (loading) return <div className={`${darkmode ? 'bg-gray-800 text-amber-50': 'bg-[#f9f9f9] text-gray-700'}`}>
+      <Loading />
+    </div>;
 
     return ( 
         <>
@@ -59,7 +86,7 @@ const Home = ({loading,darkmode,setLoading = ()=>{}}:Bool) => {
                 <div className="main-container py-3">
                     {error ? (
                         <div className="contain">{typeof error === 'object' ? 'object error' : error}</div>
-                    ):animes?.length < 1 ? (
+                    ):!loading && animes?.length < 1 ? (
                         <div className="contain">No data Found</div>
                     ):(
                         <div className="content grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4">
@@ -72,7 +99,7 @@ const Home = ({loading,darkmode,setLoading = ()=>{}}:Bool) => {
             </div>
 
             {/* pagination next and previous button */}
-               { animes?.length > 0 && <Pagination setAnimes={setAnimes} limit={limit} offset={offset} animes={animes} setOffset={setOffset} />}
+               {!loading && animes?.length > 0 && <Pagination currentPage={currentPage} handleLastPage={handleLastPage} limit={limit} offset={offset} animes={animes} setOffset={setOffset} />}
 
 
         </section>

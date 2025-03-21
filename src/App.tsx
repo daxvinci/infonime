@@ -4,39 +4,52 @@ import Home from './components/pages/Home'
 import Error from './components/pages/Error'
 import Navbar from './components/Navbar'
 import Details from './components/pages/Details'
-import { useState } from 'react'
+import { useEffect } from 'react'
 import Footer from './components/Footer'
 import Popular from './components/pages/Popular'
 import Genre from './components/pages/Genre'
 import GenreAnimes from './components/pages/GenreAnimes'
+import { useThemeContext } from './ThemeContext'
+
+
+
 
 
 function App() {
   // type Anime = {
   //   data:Array<Record<string,unknown>>
   // }
+      const {setDarkMode=()=>{}} = useThemeContext()
 
-  
-  
-  
-  const [darkmode,setDarkMode] = useState<boolean>(true)
-  
-  const [loading,setLoading] = useState<boolean>(true)
+
+
+  useEffect(()=>{
+    const theme = localStorage.getItem('theme');
+    if(theme){
+      const setMode =(theme:string)=>{
+        if(theme !== 'light'){
+          setDarkMode(false);
+        }else{
+          setDarkMode(true)
+        }
+      }
+      setMode(theme);
+    }
+  },[setDarkMode])
   
   
   return (
     <>
-    < Navbar darkmode={darkmode} />
+    < Navbar />
     <Routes>
-      <Route index element={<Home darkmode={darkmode} setLoading={setLoading} loading={loading} />} />
-      <Route path='*' element={< Error/>} />
-      <Route path='popular' element={< Popular loading={loading} darkmode={darkmode} setLoading={setLoading} />} />
-      <Route path='genre' element={< Genre/>} />
-      <Route path='/details/:id' element={<Details darkmode={darkmode} />} />
-      <Route path='/genreAnimes/:id' element={<GenreAnimes darkmode={darkmode} />} />
+      <Route index element={<Home />} />
+      <Route path='*' element={< Error />} />
+      <Route path='popular' element={< Popular />} />
+      <Route path='genre' element={< Genre />} />
+      <Route path='/details/:id' element={<Details />} />
+      <Route path='/genreAnimes/:id' element={<GenreAnimes />} />
     </Routes>
-    < Footer setDarkMode={setDarkMode} darkmode={darkmode}/>
-     
+    < Footer/>
     </>
   )
 }

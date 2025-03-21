@@ -2,13 +2,27 @@ import React from "react";
 
 
 export type Ogdata = {
-    data:Data[]
+    data:Data[];
+    meta:Count;
   }
+
+export type Details = {
+  data:Data;
+}
 
 export type Data = {
     id:string;
-    attributes:Attribs
+    attributes:Attribs;
+    animeImageUrl?:string;
 }
+
+// type Image = {
+//   posterImage?: {
+//     large?: string;
+//     small?: string;
+//     medium?:string;
+//   };
+// }
 
 export type Attribs = {
   slug: string;
@@ -77,14 +91,28 @@ export type InsideData = {
 
 export type Bool = {
   loading?: boolean;
-  setLoading?: React.Dispatch<React.SetStateAction<boolean>>
+  setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
+  setDarkMode?: React.Dispatch<React.SetStateAction<boolean>>;
   darkmode?:boolean;
+  limit?:number;
 }
 
 export type Paginate = {
-  setAnimes:React.Dispatch<React.SetStateAction<Data[]>>;
   setOffset:React.Dispatch<React.SetStateAction<number>>;
   limit:number;
   offset:number;
   animes:Data[];
+  handleLastPage: () => Promise<void>
+  // maxCount:Meta;
+  currentPage:number;
 }
+
+export type Count = {
+  count:number;
+}
+
+
+// export type TotalAnimes = {
+//   meta:Count;
+//   // links:Pages;
+// }

@@ -1,54 +1,81 @@
 import { useEffect,useState} from "react"
 import axios from "axios"
 import Card from "../Card"
-import {Bool, Ogdata, Data } from "../../lib/types"
+import Loading from "../Loading";
+import Pagination from "../Pagination"
+import {Ogdata, Data, Count } from "../../lib/types"
+import { useThemeContext } from "../../ThemeContext";
 
 
 
-const Popular = ({loading,setLoading = ()=>{},darkmode}:Bool) => {
-  const base_url = import.meta.env.VITE_BASE_URL;
-  
-  const [popular,setPopular] = useState<Data[]>([])
-  const [error,setError] = useState<object | string | undefined >()
+const Popular = () => {
+    const base_url = import.meta.env.VITE_BASE_URL;
+    const limit:number = 9
+    
+    const [totalAnimes,setTotalAnimes] = useState<Count>()
+    const [offset,setOffset] = useState<number>(0)
+    const [popular,setPopular] = useState<Data[]>([])
+    const [error,setError] = useState<object | string | undefined >()
+    
+    const [currentPage,setCurrentPage] = useState(1)
+    const {darkmode,loading,setLoading=()=>{}} = useThemeContext()
+    
+
+
+    
+    // last page 
+    const handleLastPage = async () => {
+      if (!totalAnimes) {
+        console.error('Error maxcount is undefined');
+        return;
+      }
+      const lastPageOffset = Math.floor((totalAnimes.count - 1) / limit) * limit;
+      setOffset(lastPageOffset);
+   };
 
     useEffect(()=>{
+      const animeFetch = async(limit:number,offset:number)=>{
         setLoading(true)
-        const animeFetch = async()=>{
-          try{
-            const response = await axios.get<Ogdata>(base_url + '/anime',
-              {
-                headers:{
-                  'Content-Type':'application/vnd.api+json'
-                },
-                params:{
-                  'sort':'popularityRank',
-                  'page[limit]':9,
-                  'page[offset]':0
-                }
-              })
-            const data = response.data.data
-            setPopular(data)
-            console.log(data)
-          }
-          catch(err){
-            // if (err instanceof Error) {
-            //   setError(err); // Set error to the error message
-            // } else {
-            //   setError('An unknown error occurred'); // Fallback message
-            // }
-            setError('something went wrong ')
-            console.log(err)
-          }
-          finally{
-            setLoading(false)
-          }
+        try{
+          const response = await axios.get<Ogdata>( base_url + '/anime',
+            {
+              headers:{
+                'Content-Type':'application/vnd.api+json'
+              },
+              params:{
+                'sort':'popularityRank',
+                'page[limit]':limit,
+                'page[offset]':offset
+              }
+            })
+          const data = response.data.data
+          const meta = response.data.meta
+          const currentPageNumber = Math.floor(offset/limit)+1;
+          setCurrentPage(currentPageNumber)
+          setTotalAnimes(meta)
+          setPopular(data)
+          console.log(data)
+          setLoading(false)
         }
-    
-        animeFetch()
-      },[setPopular,base_url,setLoading])
+        catch(err:unknown){
+          // if (err instanceof Error) {
+          //   setError(err); // Set error to the error message
+          // } else {
+          //   setError('An unknown error occurred'); // Fallback message
+          // }
+          setError('error check console')
+          console.log(err)
+        }
+        
+      }
+      
+        animeFetch(limit,offset)
+      },[limit,offset,base_url,setLoading])
 
 
-    if (loading) return <div className={`${darkmode ? 'bg-gray-800 text-amber-50': 'bg-[#f9f9f9] text-gray-700'}`}>Loading...</div>;
+    if (loading) return <div className={`${darkmode ? 'bg-gray-800 text-amber-50': 'bg-[#f9f9f9] text-gray-700'}`}>
+      <Loading/>
+    </div>;
 
     return ( 
         <>
@@ -58,7 +85,7 @@ const Popular = ({loading,setLoading = ()=>{},darkmode}:Bool) => {
                 <div className="main-container">
                     {error ? (
                         <div className="contain">{typeof error === 'object' ? 'object error' : error}</div>
-                    ):popular?.length < 1 ? (
+                    ):!loading && popular?.length < 1 ? (
                         <div className="contain">No data Found</div>
                     ):(
                         <div className="content grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-4">
@@ -68,7 +95,12 @@ const Popular = ({loading,setLoading = ()=>{},darkmode}:Bool) => {
                     )}
                     
                 </div>
+
+                { !loading && popular?.length > 0 && <Pagination currentPage={currentPage} handleLastPage={handleLastPage} limit={limit} offset={offset} animes={popular} setOffset={setOffset} />}
+
             </div>
+            
+
 
         </section>
         </>
