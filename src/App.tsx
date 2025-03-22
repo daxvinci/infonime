@@ -39,7 +39,7 @@ function App() {
   
   
   return (
-    <>
+    <div className='bg-gray-800'>
     < Navbar />
     <Routes>
       <Route index element={<Home />} />
@@ -50,7 +50,7 @@ function App() {
       <Route path='/genreAnimes/:id' element={<GenreAnimes />} />
     </Routes>
     < Footer/>
-    </>
+    </div>
   )
 }
 

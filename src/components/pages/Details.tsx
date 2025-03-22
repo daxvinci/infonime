@@ -106,7 +106,7 @@ const Details = () => {
                                 <p className='flex gap-3'>
                                     
                                     <strong className ={`${darkmode ? 'text-amber-50':'text-black/80'} font-bold`}>Genre: </strong>
-                                    <span className='flex gap-2'>
+                                    <div className='flex gap-2 flex-wrap'>
                                      {genres ? (
                                       genres.length === 0 ? (
                                         <span>N/A</span>
@@ -119,7 +119,7 @@ const Details = () => {
                                     ) : (
                                       <span>Something wrong</span>
                                     )}
-                                    </span>
+                                    </div>
                                 </p>
                                 <p>
                                     <strong className ={`${darkmode ? 'text-amber-50':'text-black/80'} font-bold`}>Release Date:</strong> {details?.attributes?.startDate}
