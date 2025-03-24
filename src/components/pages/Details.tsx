@@ -1,10 +1,11 @@
 import { useEffect,useState } from 'react';
 import {Link, useParams} from 'react-router'
 import axios from 'axios';
-import { DetailsData, InsideData, Ogdata, Data, Variants} from '../../lib/types';
+import { DetailsData, InsideData, Ogdata, Data} from '../../lib/types';
 import { useThemeContext } from '../../ThemeContext';
 import Loading from '../Loading';
 import { motion} from 'framer-motion';
+import type { Variants } from "motion/react"
 
 
 const containerVariants : Variants = {
@@ -137,7 +138,10 @@ const Details = () => {
                       
                             <motion.div 
                             className={`flex-2 ${darkmode ? 'text-amber-50':'text-black'} space-y-4`} 
-                            variants={detailsVariants}>
+                            variants={detailsVariants}
+                            initial="hidden"
+                            animate="visible"
+                            >
                                 <h1 
                                 className={`text-3xl ${darkmode ? 'text-amber-50':'text-black'} font-bold`}
 
@@ -151,7 +155,8 @@ const Details = () => {
                                 >
                                   {details?.attributes?.synopsis}
                                 </p>
-                                <div className="space-y-2" variants={containerVariants}>
+                                <div className="space-y-2"
+                                >
                                 <p
 
                                 >
@@ -170,7 +175,7 @@ const Details = () => {
                                 <div className='flex gap-3' >
                                     
                                     <strong className ={`${darkmode ? 'text-amber-50':'text-black/80'} font-bold`}>Genre: </strong>
-                                    <div className='flex gap-2 flex-wrap' variants={containerVariants}>
+                                    <div className='flex gap-2 flex-wrap'>
                                      {genres ? (
                                       genres.length === 0 ? (
                                         <span>N/A</span>
