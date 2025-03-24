@@ -19,7 +19,7 @@ function App() {
   // type Anime = {
   //   data:Array<Record<string,unknown>>
   // }
-      const {setDarkMode=()=>{}} = useThemeContext()
+      const {darkmode,setDarkMode=()=>{}} = useThemeContext()
 
 
 
@@ -38,8 +38,9 @@ function App() {
   },[setDarkMode])
   
   
+  
   return (
-    <div className='bg-gray-800'>
+    <div className={`${darkmode ? 'bg-gray-800': 'bg-[#f9f9f9]'}`}>
     < Navbar />
     <Routes>
       <Route index element={<Home />} />

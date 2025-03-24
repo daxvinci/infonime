@@ -35,7 +35,7 @@ export type Attribs = {
       en_jp:string;
       ja_jp:string;
 
-  }
+  };
   posterImage?: {
     tiny?: string;
     large?: string;
@@ -43,9 +43,17 @@ export type Attribs = {
     medium?:string;
     original?: string;
   };
+  coverImage?: {
+    tiny?: string,
+    large?: string,
+    small?: string,
+    original?: string,
+  };
   status:string;
+  url:string;
   [key: string]: unknown; // Allow additional unknown properties
 };
+
 
 export type Attr = {
   animes : Data[];
@@ -77,6 +85,12 @@ export type AnimeDetails = {
         medium?:string;
         original?: string;
       };
+      coverImage?: {
+        tiny?: string,
+        large?: string,
+        small?: string,
+        original?: string,
+      };
   }
 
 export type DetailsData = {
@@ -105,13 +119,33 @@ export type Paginate = {
   handleLastPage: () => Promise<void>
   // maxCount:Meta;
   currentPage:number;
+  pageType:string;
 }
 
 export type Count = {
   count:number;
 }
 
-
+export type Variants = {
+  hidden: Hidden;
+  visible: Visible; 
+}
+type Hidden = {
+  x?:number;
+  y?:number;
+  opacity?:number
+}
+type Visible = {
+  x?: number;
+  y?: number;
+  opacity?: number;
+  transition?: Transition;
+}
+type Transition = {
+  delay?: number;
+  duration?:number;
+  staggerChildren?: number;
+}
 // export type TotalAnimes = {
 //   meta:Count;
 //   // links:Pages;

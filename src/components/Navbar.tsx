@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { useThemeContext } from "../ThemeContext";
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from 'framer-motion';
 
 const Navbar = () => {
@@ -14,6 +14,15 @@ const Navbar = () => {
         const toggleDropdown = () => {
             setIsOpen(!isOpen);
           };
+
+        const handleChange =(e:React.SyntheticEvent)=>{
+          const {value} = e.target as HTMLInputElement;
+          console.log(value)
+        }
+
+          const handlePage =()=>{
+            localStorage.setItem('homePersist','0')
+          }
 
           useEffect(() => {
             const handleScroll = () => {
@@ -47,7 +56,7 @@ const Navbar = () => {
          ref={navRef} 
          className={`flex flex-col sm:flex-row ${
         isSticky ? 'fixed top-0' : 'relative'
-      } right-0 left-0 z-50 ${
+      } right-0 left-0 z-50 shadow-2xl ${
         darkmode ? 'text-white bg-black' : 'text-black bg-white'
       } sm:justify-between sm:items-center gap-4 p-6 `}
       initial={{ y: -100 }} // Initial position (off-screen)
@@ -62,7 +71,7 @@ const Navbar = () => {
       >
       {/* Logo */}
       <div className="flex justify-between items-center">
-        <Link to="/">
+        <Link onClick={handlePage} to="/">
           <h2 className="text-3xl">Infonime</h2>
         </Link>
         {/* Hamburger Icon (Mobile Only) */}
@@ -107,6 +116,7 @@ const Navbar = () => {
               name="search"
               placeholder="search..."
               id="search"
+              onChange={(e)=>handleChange(e)}
             />
           </div>
         </div>

@@ -91,7 +91,7 @@ const Genre = () => {
 
           {error ? (
                         <div className="contain">{typeof error === 'object' ? 'object error' : error}</div>
-                    ):!loading && genres?.length < 1 ? (
+                    ):genres?.length < 1 ? (
                         <div className="contain">No data Found</div>
                     ):(
                         <div className="content grid sm:grid-cols-2 lg:grid-cols-5 grid-cols-1 gap-4">
@@ -105,10 +105,12 @@ const Genre = () => {
                                 >
                                   {/* Image Container */}
                                   <div className=" w-full h-40 opacity-40 hover:opacity-75 flex-shrink-0">
-                                    <img
-                                      src={genre?.animeImageUrl} // Fallback image if no image is provided
+                                    <motion.img
+                                      src={genre?.animeImageUrl || 'https://via.placeholder.com/150'} // Fallback image if no image is provided
                                       alt={genre?.attributes?.slug || 'Image not available'}
                                       className="w-full h-full object-cover"
+                                      whileHover={{ scale: 1.2 }} 
+                                      transition={{ duration: 0.5 }} 
                                     />
                                   </div>
 

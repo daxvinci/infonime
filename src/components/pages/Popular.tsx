@@ -1,16 +1,21 @@
-import { useEffect,useState} from "react"
+import { useEffect,useRef,useState} from "react"
 import axios from "axios"
 import Card from "../Card"
 import Loading from "../Loading";
 import Pagination from "../Pagination"
 import {Ogdata, Data, Count } from "../../lib/types"
 import { useThemeContext } from "../../ThemeContext";
+import { useLocation } from "react-router";
 
 
 
 const Popular = () => {
     const base_url = import.meta.env.VITE_BASE_URL;
     const limit:number = 9
+
+    
+    const isInitialized = useRef(false);
+    const location = useLocation()
     
     const [totalAnimes,setTotalAnimes] = useState<Count>()
     const [offset,setOffset] = useState<number>(0)
@@ -19,6 +24,8 @@ const Popular = () => {
     
     const [currentPage,setCurrentPage] = useState(1)
     const {darkmode,loading,setLoading=()=>{}} = useThemeContext()
+
+    const pageType = "popularPersist"
     
 
 
@@ -31,11 +38,22 @@ const Popular = () => {
       }
       const lastPageOffset = Math.floor((totalAnimes.count - 1) / limit) * limit;
       setOffset(lastPageOffset);
+      localStorage.setItem(pageType,lastPageOffset.toString())
    };
 
+   useEffect(() => {
+    const savedOffset = localStorage.getItem(pageType);
+    if(savedOffset){
+      const intSavedOffset = parseInt(savedOffset,10)
+      setOffset(intSavedOffset)
+      isInitialized.current = true;
+    }
+  
+  }, [location.key])
+
     useEffect(()=>{
+      setLoading(true)
       const animeFetch = async(limit:number,offset:number)=>{
-        setLoading(true)
         try{
           const response = await axios.get<Ogdata>( base_url + '/anime',
             {
@@ -54,7 +72,7 @@ const Popular = () => {
           setCurrentPage(currentPageNumber)
           setTotalAnimes(meta)
           setPopular(data)
-          console.log(data)
+          // console.log(data)
           setLoading(false)
         }
         catch(err:unknown){
@@ -96,7 +114,7 @@ const Popular = () => {
                     
                 </div>
 
-                { !loading && popular?.length > 0 && <Pagination currentPage={currentPage} handleLastPage={handleLastPage} limit={limit} offset={offset} animes={popular} setOffset={setOffset} />}
+                { !loading && popular?.length > 0 && <Pagination pageType={pageType} currentPage={currentPage} handleLastPage={handleLastPage} limit={limit} offset={offset} animes={popular} setOffset={setOffset} />}
 
             </div>
             

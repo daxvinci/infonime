@@ -5,25 +5,31 @@ import { FaAngleDoubleLeft, FaAngleLeft, FaAngleRight, FaAngleDoubleRight } from
 
 
 
-const Pagination = ({animes,currentPage,handleLastPage,setOffset,limit,offset}:Paginate) => {
+const Pagination = ({animes,pageType,currentPage,handleLastPage,setOffset,limit,offset}:Paginate) => {
 
 
   // Handle "First Page" button click
   const handleFirstPage = () => {
-    setOffset(0);
+    const first = 0
+    setOffset(first);
+    localStorage.setItem(pageType,first.toString())
   };
 
   // Handle "Previous" button click
   const handlePrev = () => {
     if (currentPage > 1) {
-      setOffset(offset - limit)
+      const previous = (offset - limit)
+      setOffset(previous)
+      localStorage.setItem(pageType,previous.toString())
     }
   };
 
   // Handle "Next" button click
   const handleNext = () => {
     if (animes.length === limit ) {
-      setOffset(offset + limit)
+      const next = (offset + limit)
+      setOffset(next)
+      localStorage.setItem(pageType,next.toString())
     }
   };
 

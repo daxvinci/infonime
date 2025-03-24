@@ -2,9 +2,10 @@ import Card from "../Card";
 import Loading from "../Loading";
 import { Data, Count, Ogdata} from "../../lib/types"
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Pagination from "../Pagination";
 import { useThemeContext } from "../../ThemeContext";
+import { useLocation } from "react-router";
 
 
 const Home = () => {
@@ -12,16 +13,20 @@ const Home = () => {
     const base_url = import.meta.env.VITE_BASE_URL;
     const limit:number = 9
     
+    
 
     const [totalAnimes,setTotalAnimes] = useState<Count>()
     const [offset,setOffset] = useState<number>(0)
     const [animes,setAnimes] = useState<Data[]>([])
     const [error,setError] = useState<object | string | undefined >()
     const {darkmode,loading,setLoading=()=>{}} = useThemeContext()
+    const location = useLocation()
     
+    const pageType = "homePersist"
     
     const [currentPage,setCurrentPage] = useState(1)
-
+    const isInitialized = useRef(false);
+    
 
     
     
@@ -33,11 +38,40 @@ const Home = () => {
     }
     const lastPageOffset = Math.floor((totalAnimes.count - 1) / limit) * limit;
     setOffset(lastPageOffset);
+    localStorage.setItem(pageType,lastPageOffset.toString())
   };
+
+  useEffect(() => {
+    const savedOffset = localStorage.getItem(pageType);
+    if(savedOffset){
+      const intSavedOffset = parseInt(savedOffset,10)
+      setOffset(intSavedOffset)
+      isInitialized.current = true;
+    }
+  
+  }, [location.key])
+
+//   useEffect(() => {
+//     const handlePopState = () => {
+//         const savedOffset = localStorage.getItem(pageType);
+//         if (savedOffset) {
+//             const intSavedOffset = parseInt(savedOffset, 10);
+//             setOffset(intSavedOffset);
+//         }
+//     };
+
+//     window.addEventListener('popstate', handlePopState);
+
+//     return () => {
+//         window.removeEventListener('popstate', handlePopState);
+//     };
+// }, []);
+  
   
   useEffect(()=>{
+    if (!isInitialized.current) return;
+    setLoading(true)
     const animeFetch = async(limit:number,offset:number)=>{
-      setLoading(true)
       try{
         const response = await axios.get<Ogdata>( base_url + '/anime',
           {
@@ -55,7 +89,7 @@ const Home = () => {
         setCurrentPage(currentPageNumber)
         setTotalAnimes(meta)
         setAnimes(data)
-        console.log(data)
+        // console.log(data)
         setLoading(false)
       }
       catch(err){
@@ -69,9 +103,10 @@ const Home = () => {
       }
       
     }
+
     
         animeFetch(limit,offset)
-      },[limit,offset,base_url,setLoading])
+      },[limit,offset,base_url,setLoading,location])
     
 
     if (loading) return <div className={`${darkmode ? 'bg-gray-800 text-amber-50': 'bg-[#f9f9f9] text-gray-700'}`}>
@@ -99,7 +134,7 @@ const Home = () => {
             </div>
 
             {/* pagination next and previous button */}
-               {!loading && animes?.length > 0 && <Pagination currentPage={currentPage} handleLastPage={handleLastPage} limit={limit} offset={offset} animes={animes} setOffset={setOffset} />}
+               {!loading && animes?.length > 0 && <Pagination pageType ={pageType} currentPage={currentPage} handleLastPage={handleLastPage} limit={limit} offset={offset} animes={animes} setOffset={setOffset} />}
 
 
         </section>
