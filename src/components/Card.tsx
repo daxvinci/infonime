@@ -1,7 +1,8 @@
 import { Link } from "react-router";
 import { Details } from "../lib/types";
 import { useThemeContext } from "../ThemeContext";
-import { motion } from 'framer-motion';
+import * as motion from "motion/react-client"
+
 
 
 const Card = ({data}:Details) => {

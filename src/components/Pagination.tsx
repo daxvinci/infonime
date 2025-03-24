@@ -1,6 +1,6 @@
 
 import { Paginate } from '../lib/types';
-import { motion } from 'framer-motion';
+import * as motion from "motion/react-client"
 import { FaAngleDoubleLeft, FaAngleLeft, FaAngleRight, FaAngleDoubleRight } from 'react-icons/fa';
 
 

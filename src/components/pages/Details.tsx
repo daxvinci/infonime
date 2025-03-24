@@ -4,7 +4,7 @@ import axios from 'axios';
 import { DetailsData, InsideData, Ogdata, Data} from '../../lib/types';
 import { useThemeContext } from '../../ThemeContext';
 import Loading from '../Loading';
-import { motion} from 'framer-motion';
+import * as motion from "motion/react-client"
 import type { Variants } from "motion/react"
 
 

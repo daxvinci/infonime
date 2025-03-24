@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { useThemeContext } from "../ThemeContext";
 import { FaBars, FaTimes } from 'react-icons/fa';
 import React, { useEffect, useRef, useState } from "react";
-import { motion } from 'framer-motion';
+import * as motion from "motion/react-client"
 
 const Navbar = () => {
         const {darkmode} = useThemeContext()
